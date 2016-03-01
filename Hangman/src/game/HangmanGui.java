@@ -56,7 +56,6 @@ public class HangmanGui extends javax.swing.JFrame {
         gallowsImg = new javax.swing.JLabel();
         resultLabel = new javax.swing.JLabel();
         guessLabel = new javax.swing.JLabel();
-        playAgainButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -71,6 +70,11 @@ public class HangmanGui extends javax.swing.JFrame {
         used.setText(" ");
 
         guessField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        guessField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guessFieldActionPerformed(evt);
+            }
+        });
 
         guessButton.setText("Guess");
         guessButton.addActionListener(new java.awt.event.ActionListener() {
@@ -87,15 +91,6 @@ public class HangmanGui extends javax.swing.JFrame {
 
         guessLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         guessLabel.setText(new String(guessAry));
-
-        playAgainButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        playAgainButton.setText("Reset");
-        playAgainButton.setActionCommand("Reset");
-        playAgainButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                playAgainButtonActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -115,9 +110,7 @@ public class HangmanGui extends javax.swing.JFrame {
                                 .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(126, 126, 126)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(playAgainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(guessLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(guessLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(guessField, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -153,8 +146,6 @@ public class HangmanGui extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(resultLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(playAgainButton, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
                         .addComponent(guessLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(106, 106, 106))))
         );
@@ -210,9 +201,52 @@ public class HangmanGui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_guessButtonActionPerformed
 
-    private void playAgainButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playAgainButtonActionPerformed
-        initComponents();
-    }//GEN-LAST:event_playAgainButtonActionPerformed
+    private void guessFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guessFieldActionPerformed
+       if(guessField.getText().length() == 1){
+            if(!(used.getText().contains(guessField.getText()))){
+                if(guessField.getText().charAt(0) >= 97 && guessField.getText().charAt(0) <= 122){
+                    if(!(word.contains(guessField.getText()))){
+                        if(!checkLose()){
+                            numWrong++;
+                            gallowsImg.setIcon(gallows[numWrong]);
+                        }else{
+                            numWrong++;
+                            gallowsImg.setIcon(gallows[numWrong]);
+                            resultLabel.setForeground(Color.RED);
+                            resultLabel.setText("YOU LOSE");
+                            guessField.setEnabled(false);
+                            guessButton.setEnabled(false);
+                            guessButton.setText("SORRY");
+                        }
+                    }else{
+                        fillWord(guessField.getText().charAt(0));
+                        guessLabel.setText(new String(guessAry));
+                        if(checkWin()){
+                            resultLabel.setForeground(Color.GREEN.darker());
+                            resultLabel.setText("YOU WIN");
+                            guessField.setEnabled(false);
+                            guessButton.setEnabled(false);
+                            guessButton.setText("YAY");
+                        }
+
+                    }
+                    used.setText(used.getText() + " " + guessField.getText()); //add guess to the used label
+                    guessField.setText("");//reset the guess field
+                    errorLabel.setText("");
+                }else{
+                    guessField.setText("");
+                    errorLabel.setText("Lower case letters only please");
+                }
+            }else{
+                guessField.setText("");
+                errorLabel.setText("You have already guessed that");
+            }
+        }else{
+            guessField.setText("");
+            errorLabel.setText("Please enter only one character");
+            
+        }
+    }//GEN-LAST:event_guessFieldActionPerformed
     
     private void fillWord(char guess){
         for(int i = 0; i < word.length(); i++){
@@ -283,7 +317,6 @@ public class HangmanGui extends javax.swing.JFrame {
     private javax.swing.JButton guessButton;
     private javax.swing.JTextField guessField;
     private javax.swing.JLabel guessLabel;
-    private javax.swing.JButton playAgainButton;
     private javax.swing.JLabel resultLabel;
     private javax.swing.JLabel used;
     private javax.swing.JLabel usedLabel;
